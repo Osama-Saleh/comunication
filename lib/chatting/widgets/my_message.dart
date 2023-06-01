@@ -124,45 +124,13 @@ class _MyMessageState extends State<MyMessage> {
                               onTap: () async {
                                 print("Clicked");
                                 print("index Click :${widget.index}");
-                                // print("prog Click :${progress}");
-                                // ChattingCubit.get(context).changeProgress(
-                                //     model: widget.messageModel,
-                                //     prog: ChattingCubit.get(context)
-                                //         .progress);
-                                // if (widget.index == widget.index) {
-                                // ChattingCubit.get(context)
-                                //     .messages![widget.index!]
-                                //     .progress = ChattingCubit.get(context).prog;
 
-                                // print("pppppppp${ChattingCubit.get(context).prog}");
-                                // }
-                                // if (ChattingCubit.get(context).docsLocation[widget.index!] ==
-                                //     ChattingCubit.get(context).externalDir) {
-                                //   print("downloaded ");
-                                // }
-                                //  else {
-                                // ChattingCubit.get(context).changeProgress(
-                                //     model: widget.messageModel,
-                                //     prog: progress);
                                 print("Model ${widget.messageModel}");
                                 Provider.of<ChattingController>(context)
                                     .downloadDocuments(
                                         url: "${widget.messageModel!.docsUrl}",
                                         fileName:
                                             "${widget.messageModel!.docsName}");
-                                // ChattingCubit.get(context)
-                                //     .downloadDocuments(
-                                //         url:
-                                //             "${widget.messageModel!.docsUrl}",
-                                //         fileName:
-                                //             "${widget.messageModel!.docsName}")
-                                //     .whenComplete(() {
-                                //   print("widget.index ${widget.index}");
-                                //   // print("${widget.messageModel!.progress}");
-                                //   // ChattingCubit.get(context).changeProgress(
-                                //   //   index: widget.index,
-                                //   // );
-                                // });
 
                                 print("Download is done");
 
@@ -214,52 +182,20 @@ class _MyMessageState extends State<MyMessage> {
                           padding: const EdgeInsets.all(8.0),
                           child: InkWell(
                             onTap: () {
-                              // Dialog(
-                              //   child: Container(
-                              //     width: 200,
-                              //     height: 200,
-                              //     decoration: BoxDecoration(
-                              //         image: DecorationImage(
-                              //             image: ExactAssetImage(
-                              //                 'assets/tamas.jpg'),
-                              //             fit: BoxFit.cover)),
-                              //   ),
-                              // );
+                              
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return Container(
                                       height:
                                           MediaQuery.of(context).size.height,
-                                      // decoration: BoxDecoration(
-                                      // color: Colors.amber,
-                                      //     image: DecorationImage(
-                                      //   image: NetworkImage(
-                                      //       "${widget.messageModel!.image}"),
-                                      //   fit: BoxFit.fill,
-                                      // )),
+                                     
                                       child: PhotoView(
                                         imageProvider: NetworkImage(
                                           "${widget.messageModel!.image}",
                                         ),
                                       )
-                                      // child: Dialog(
-                                      //   child: Container(
-                                      //     child: PhotoView(
-                                      //     imageProvider: NetworkImage(
-
-                                      //       "${widget.messageModel!.image}",
-
-                                      //     ),
-                                      //   ),
-                                      //   ),
-                                      //   // child: PhotoView(
-                                      //   //   imageProvider: NetworkImage(
-                                      //   //     "${widget.messageModel!.image}",
-
-                                      //   //   ),
-                                      //   // ),
-                                      // ),
+                                      
                                       );
                                 },
                               );
@@ -290,11 +226,9 @@ class _MyMessageState extends State<MyMessage> {
                               InkWell(
                                 onTap: () {
                                   String? uri =
-                                      // "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
                                       "${widget.messageModel!.record}";
                                   setState(() {
                                     isPlay = !isPlay;
-                                    // widget.messageModel.onceRecordPlaying = true;
                                   });
                                   if (isPlay == false) {
                                     audioPlayer.pause();

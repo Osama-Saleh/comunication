@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_print, prefer_is_empty
 
-import 'package:communication/chatting/controller/chatting_controller.dart';
+// import 'package:communication/chatting/controller/chatting_controller.dart';
 import 'package:communication/components/widgets/my_app_bar.dart';
 import 'package:communication/user/controller/controller/user_controller.dart';
 import 'package:communication/user/widgets/build_item_user.dart';
@@ -8,6 +8,8 @@ import 'package:communication/user/widgets/my_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+
+import '../chatting/controller/chatting_controller.dart';
 
 class UserView extends StatefulWidget {
   const UserView({super.key});
@@ -20,14 +22,17 @@ class _UserViewState extends State<UserView> {
   @override
   void initState() {
     Provider.of<UserController>(context, listen: false).getAllUser();
-    // Provider.of<ChattingController>(context,listen: false).getMessage();
+    // Provider.of<ChattingController>(context, listen: false).resetMessages();
 
     super.initState();
   }
 
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
+    var providerListenFlase =
+        Provider.of<UserController>(context, listen: false);
     return Scaffold(
       key: scaffoldKey,
       appBar: MyAppBar(
@@ -59,11 +64,9 @@ class _UserViewState extends State<UserView> {
                   child: ListView.builder(
                     itemBuilder: (context, index) {
                       return BuildItemsUser(
-                          userModel: Provider.of<UserController>(context)
-                              .countUsers![index]);
+                          userModel: providerListenFlase.countUsers![index]);
                     },
-                    itemCount:
-                        Provider.of<UserController>(context).countUsers!.length,
+                    itemCount: providerListenFlase.countUsers!.length,
                   ),
                 ),
               ],

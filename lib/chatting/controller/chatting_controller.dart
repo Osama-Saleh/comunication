@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, await_only_futures
+// ignore_for_file: avoid_print, await_only_futures, unnecessary_brace_in_string_interps
 
 import 'dart:async';
 import 'dart:io';
@@ -6,14 +6,14 @@ import 'dart:io';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:communication/components/const.dart';
-import 'package:communication/core/hive_helper.dart';
+// import 'package:communication/core/hive_helper.dart';
 import 'package:communication/module/message_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -86,9 +86,18 @@ class ChattingController extends ChangeNotifier {
   //*      get messages from firebase to message model
   //*==============================================================
   List<MessageModel>? messages = [];
+  bool messageLoaded = false;
+
+  void resetMessages() {
+    messages = [];
+    notifyListeners();
+  }
+
   Future<void> getMessage({
     String? receiverId,
   }) async {
+    messages = [];
+    messageLoaded = false;
     print("getMessage notify Loading");
     await FirebaseFirestore.instance
         .collection('users')
@@ -99,16 +108,15 @@ class ChattingController extends ChangeNotifier {
         .orderBy("dateTime")
         .snapshots()
         .listen((event) {
-      messages = [];
-      
-      
       // print("lllll ${event.docs.length}");
       // event.docs.forEach((element) {
       // print("lalala $messages");
       // });
+
       for (var element in event.docs) {
         messages!.add(MessageModel.fromJson(element.data()));
       }
+      messageLoaded = true;
       print("lalalammm ${messages}");
       print("getMessage notify Succ");
       notifyListeners();
@@ -211,6 +219,19 @@ class ChattingController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> resetRecord() async {
+    print("Done Record");
+    secondTime = 0;
+    minutesTime = 0;
+    messageController.text = "";
+
+    isChangeHintText = false;
+
+    print(
+        'time => ${secondTime! + minutesTime!}  message => ${messageController.text.trim().isEmpty}');
+    notifyListeners();
+  }
+
   File? audioFile;
   Future stop({
     String? receiverId,
@@ -220,6 +241,8 @@ class ChattingController extends ChangeNotifier {
     final path = await recorder.stopRecorder();
     audioFile = File(path!);
     print("audioFile $audioFile");
+    secondTime = 0;
+    minutesTime = 0;
     voiceSave(receiverId: receiverId);
     // uploadAudio(path, receiverId!);
   }
@@ -236,7 +259,6 @@ class ChattingController extends ChangeNotifier {
       (Timer timer) {
         secondTime = secondTime! + 1;
         notifyListeners();
-
         if (secondTime == 10) {
           minutesTime = minutesTime! + 1;
           secondTime = 0;
@@ -306,9 +328,7 @@ class ChattingController extends ChangeNotifier {
   //*=======================================================================
   String? audioUrl;
   Future<void> voiceSave({String? receiverId}) async {
-    // emit(UploadRecordLoadingState());
     print("SaveRecordLoading");
-
     FirebaseStorage.instance
         .ref("records/${Uri.file(audioFile!.path).pathSegments.last}.mp3")
         .putFile(audioFile!, SettableMetadata(contentType: 'audio/wav'))
@@ -317,7 +337,6 @@ class ChattingController extends ChangeNotifier {
         //? value => paht url
         print("value url  ${value}");
         print("SaveRecord Succ");
-        notifyListeners();
 
         audioUrl = "${value}.mp3";
         sendMessage(
@@ -325,6 +344,8 @@ class ChattingController extends ChangeNotifier {
           record: audioUrl,
           dateTime: DateTime.now().toString(),
         );
+
+        notifyListeners();
       }).catchError((onError) {
         notifyListeners();
         print("SaveRecord Error");
