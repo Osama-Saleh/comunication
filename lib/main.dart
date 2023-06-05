@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
           create: (context) => LoginController(),
         ),
         ChangeNotifierProvider<RegisterController>(
-          create: (context) => RegisterController(),
+          create: (context) => RegisterController(),  
         ),
         ChangeNotifierProvider<UserController>(
           create: (context) => UserController(),

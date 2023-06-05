@@ -27,22 +27,11 @@ class ChattingView extends StatefulWidget {
 }
 
 class _ChattingState extends State<ChattingView> {
-  Future? getDate;
-  // Future gat() async {
-  //   await Future.delayed(
-  //     const Duration(milliseconds: 250),
-  //     () {
-  //       return getDate;
-  //     },
-  //   );
-  // }
-
   @override
   void initState() {
     super.initState();
     Provider.of<ChattingController>(context, listen: false).initRecorder();
-
-    getDate = Provider.of<ChattingController>(context, listen: false)
+    Provider.of<ChattingController>(context, listen: false)
         .getMessage(receiverId: "${widget.model!.token}");
   }
 
@@ -100,12 +89,13 @@ class _ChattingState extends State<ChattingView> {
             },
             icon: Icons.arrow_back,
           ),
+          
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //*=========================================================
-            //*                   List of message
+            //*                  display List of message
             //*=========================================================
             Expanded(
                 child: providerListenFalse.messageLoaded == false
@@ -128,7 +118,7 @@ class _ChattingState extends State<ChattingView> {
                                 return MyMessage(
                                   messageModel:
                                       providerListenFalse.messages![index],
-                                  index: index,
+                                  // index: index,
                                   // fileName: cubit.fileName![index],
                                 );
                               }
@@ -137,6 +127,7 @@ class _ChattingState extends State<ChattingView> {
                                   ReceiveMessage(
                                 messageModel:
                                     providerListenFalse.messages![index],
+                                index: index,
                               );
                             },
                             separatorBuilder: (context, index) => SizedBox(
@@ -192,9 +183,8 @@ class _ChattingState extends State<ChattingView> {
                 //     }),
                 ),
             //*========================================================
-            //*                 input my message
+            //*           text Form Field to write my message
             //*========================================================
-
             Form(
               key: Provider.of<ChattingController>(
                 context,
@@ -242,15 +232,6 @@ class _ChattingState extends State<ChattingView> {
                                                 .isChangeHintText ==
                                             true) {
                                           print("closed");
-                                          // cubit
-                                          //     .stop(
-                                          //         receiverId:
-                                          //             widget.model!.token)
-                                          //     .whenComplete(() {
-                                          //   cubit.isChangeHintText = false;
-                                          //   cubit.hintText = "Message";
-                                          //   print("cubit.changeHintText");
-                                          // });
                                         } else {
                                           Provider.of<ChattingController>(
                                                   context,
@@ -263,8 +244,6 @@ class _ChattingState extends State<ChattingView> {
                                         //*===========================================
                                         SystemChannels.textInput
                                             .invokeMethod("TextInput.hide");
-                                        // print(
-                                        //     "isEmoji ${cubit.isEmojiSelected}");
                                       },
                                       icon: Provider.of<ChattingController>(
                                                   context,
@@ -278,6 +257,8 @@ class _ChattingState extends State<ChattingView> {
                                 ),
                                 keyboardType: TextInputType.multiline),
                           ),
+                          //* icon button send
+
                           MyIconButton(
                             onPressed: (Provider.of<ChattingController>(context,
                                             listen: true)
@@ -303,16 +284,9 @@ class _ChattingState extends State<ChattingView> {
                                           .stop(receiverId: widget.model!.token)
                                           .whenComplete(() async {
                                         await providerListenFalse.resetRecord();
-                                        // print("Done Record");
-                                        // providerListenFalse.secondTime = 0;
-                                        // providerListenFalse.minutesTime = 0;
+
                                         print(
                                             "secondTime ${providerListenFalse.secondTime} minutesTime ${providerListenFalse.minutesTime}");
-                                        // providerListenFalse
-                                        //     .messageController.text = "";
-
-                                        // providerListenFalse.isChangeHintText =
-                                        //     false;
                                       });
                                     } else {
                                       print("isChangeHintText2");
@@ -325,8 +299,6 @@ class _ChattingState extends State<ChattingView> {
                                                 listen: false)
                                             .messageController
                                             .text,
-                                        // image: cubit.selectImage.toString(),
-                                        // record: cubit.audioUrl,
                                       )
                                           .whenComplete(() {
                                         providerListenFalse.hintText =
@@ -337,8 +309,6 @@ class _ChattingState extends State<ChattingView> {
                                             .getMessage(
                                                 receiverId: widget.model!.token)
                                             .whenComplete(() {
-                                          // HiveHelper.setData(
-                                          //     key: "isMessaged", value: "true");
                                           if (providerListenFalse.messages !=
                                               null) {
                                             Future.delayed(
@@ -362,7 +332,6 @@ class _ChattingState extends State<ChattingView> {
                                               },
                                             );
                                             print("MaxScroll");
-                                            // print("MaxScroll ${cubit.messages![0].record}");
                                           }
                                         });
                                       });
@@ -387,7 +356,6 @@ class _ChattingState extends State<ChattingView> {
                                   //!----------------------------------------------;
                                 });
                                 print("long");
-                                // cubit.hintText = "${cubit.minutesTime} : ${cubit.secondTime}";
                                 providerListenFalse.isChangeHintText = true;
                                 print(
                                     "isRecorderReady : ${Provider.of<ChattingController>(context, listen: false).isRecorderReady}");
@@ -396,6 +364,7 @@ class _ChattingState extends State<ChattingView> {
                                     receiverId: widget.model!.token);
                               }
                             },
+                            //* icon button to change between (mic - image) icons
                             child: MyIconButton(
                               onPressed: () {
                                 providerListenFalse.changeMice();
@@ -408,24 +377,21 @@ class _ChattingState extends State<ChattingView> {
                           )
                         ],
                       ),
-                      if (Provider.of<ChattingController>(context,
-                                  listen: false)
-                              .isEmojiSelected ==
-                          true)
-                        Container(
-                          height: 30.h,
-                          width: double.infinity,
-                          child: EmojiPicker(
-                            textEditingController:
-                                providerListenFalse.messageController,
-                            onEmojiSelected: (category, emoji) {
-                              providerListenFalse.textEditController();
-                            },
-                          ),
-                        )
                     ],
                   )),
             ),
+            //* Special to emoji
+            if (Provider.of<ChattingController>(context, listen: false)
+                    .isEmojiSelected ==
+                true)
+              Expanded(
+                child: EmojiPicker(
+                  textEditingController: providerListenFalse.messageController,
+                  onEmojiSelected: (category, emoji) {
+                    providerListenFalse.textEditController();
+                  },
+                ),
+              )
           ],
         ));
   }

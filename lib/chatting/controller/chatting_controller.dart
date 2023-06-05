@@ -1,13 +1,15 @@
-// ignore_for_file: avoid_print, await_only_futures, unnecessary_brace_in_string_interps
+// ignore_for_file: avoid_print, await_only_futures, unnecessary_brace_in_string_interps, non_constant_identifier_names
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:communication/chatting/model/message_model.dart';
 import 'package:communication/components/const.dart';
 // import 'package:communication/core/hive_helper.dart';
-import 'package:communication/module/message_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,44 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ChattingController extends ChangeNotifier {
+  final audioPlayer = AudioPlayer();
+
+  bool isPlay = false;
+
+  Duration duration = Duration.zero;
+
+  Duration position = Duration.zero;
+
+  String formatTime(int seconds) {
+    return "${Duration(seconds: seconds)}".split(".")[0].padLeft(8, "0");
+  }
+
+  // void onPlayerStateChanged() {
+  //   audioPlayer.onPlayerStateChanged.listen((state) {
+  //     isPlay = state == PlayerState.playing;
+  //   });
+  // }
+
+  void onDurationChanged() {
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      duration = newDuration;
+      notifyListeners();
+    });
+  }
+
+  void onPositionChanged() {
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      position = newPosition;
+
+      notifyListeners();
+    });
+  }
+
+  void isPlayRecord() {
+    isPlay = !isPlay;
+    notifyListeners();
+  }
+
   ScrollController scrollController = ScrollController();
   var formKey = GlobalKey<FormState>();
   bool isEmojiSelected = false;
@@ -88,15 +128,14 @@ class ChattingController extends ChangeNotifier {
   List<MessageModel>? messages = [];
   bool messageLoaded = false;
 
-  void resetMessages() {
-    messages = [];
-    notifyListeners();
-  }
+  // void resetMessages() {
+  //   messages = [];
+  //   notifyListeners();
+  // }
 
   Future<void> getMessage({
     String? receiverId,
   }) async {
-    messages = [];
     messageLoaded = false;
     print("getMessage notify Loading");
     await FirebaseFirestore.instance
@@ -108,10 +147,7 @@ class ChattingController extends ChangeNotifier {
         .orderBy("dateTime")
         .snapshots()
         .listen((event) {
-      // print("lllll ${event.docs.length}");
-      // event.docs.forEach((element) {
-      // print("lalala $messages");
-      // });
+      messages = [];
 
       for (var element in event.docs) {
         messages!.add(MessageModel.fromJson(element.data()));
@@ -130,7 +166,6 @@ class ChattingController extends ChangeNotifier {
   ImagePicker sendpicker = ImagePicker();
 
   Future setSelectImage({String? receiverId}) async {
-    // emit(SelectImageLoadingState());
     print("SelectImage notify loading");
     final imagefile = await sendpicker.pickImage(source: ImageSource.gallery);
 
@@ -140,7 +175,6 @@ class ChattingController extends ChangeNotifier {
 
       uploadImage(receiverId: receiverId);
       notifyListeners();
-      // emit(SelectImageSuccessState());
       print("SelectImage notify secc");
     } else {
       print("Not Image Selected");
@@ -148,7 +182,7 @@ class ChattingController extends ChangeNotifier {
   }
 
 //*=======================================================================
-//*                       upload image
+//*                       upload image in firebase
 //*=======================================================================
   String? image;
   Future<void> uploadImage({String? receiverId}) async {
@@ -161,21 +195,16 @@ class ChattingController extends ChangeNotifier {
         //? value => paht url
         print("Image Url $value");
         notifyListeners();
-        // image = value;
-        // emit(UploadImageSuccessState());
-        // print("UploadImageSuccessState");
-        // print(image);
+
         sendMessage(
           receiverId: receiverId,
           image: value,
           dateTime: DateTime.now().toString(),
         );
       }).catchError((onError) {
-        // emit(UploadImageErrorState());
         print("UploadImageError : $onError");
       });
     }).catchError((onError) {
-      // emit(UploadImageErrorState());
       print("UploadImageError: $onError");
     });
   }
@@ -187,7 +216,6 @@ class ChattingController extends ChangeNotifier {
   bool isRecorderReady = false;
   bool isChangeHintText = false;
   String? hintText = "Message";
-  // String? recordFile;
 
   Future initRecorder() async {
     final status = await Permission.microphone.request();
@@ -204,7 +232,6 @@ class ChattingController extends ChangeNotifier {
     await recorder.startRecorder(toFile: "audio${DateTime.now().millisecond}");
     print("RecordMessageSuccess");
     notifyListeners();
-    // isRecorderReady = false;
   }
 
   bool isMice = false;
@@ -219,6 +246,9 @@ class ChattingController extends ChangeNotifier {
     notifyListeners();
   }
 
+  //*======================================================
+  //*                   reset time of record
+  //*======================================================
   Future<void> resetRecord() async {
     print("Done Record");
     secondTime = 0;
@@ -349,14 +379,10 @@ class ChattingController extends ChangeNotifier {
       }).catchError((onError) {
         notifyListeners();
         print("SaveRecord Error");
-        // emit(UploadRecordErrorState());
-        // print("UploadRecordErrorState : $onError");
       });
     }).catchError((onError) {
       notifyListeners();
       print("SaveRecord Error");
-      // emit(UploadRecordErrorState());
-      // print("UploadRecordErrorState : $onError");
     });
   }
 
@@ -367,7 +393,6 @@ class ChattingController extends ChangeNotifier {
   String? filePath;
   String? fileName;
   Future selectDocuments({String? receiverId}) async {
-    // emit(SelectDocumentsLoadingState());
     print("SelectDocumentsNotifyLoading");
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
@@ -379,8 +404,6 @@ class ChattingController extends ChangeNotifier {
       print("fileNames : ${result.names.first}");
       fileName = result.names.first;
       filePath = file.path;
-    } else {
-      // User canceled the file selection
     }
 
     print("filePath $filePath");
@@ -403,13 +426,10 @@ class ChattingController extends ChangeNotifier {
         notifyListeners();
         print("SelectDocumentsSuccessState");
         // downloadDocuments(url: value, fileName: fileName);
-        // emit(SelectDocumentsSuccessState());
       }).catchError((onError) {
-        // emit(SelectDocumentsErrorState());
         print("SelectDocumentsError : $onError");
       });
     }).catchError((onError) {
-      // emit(SelectDocumentsErrorState());
       print("SelectDocumentsError : $onError");
     });
   }
@@ -422,7 +442,6 @@ class ChattingController extends ChangeNotifier {
 
   Future downloadDocuments(
       {required String url, required String? fileName}) async {
-    // emit(DownloadDocumentsLoadingState());
     print("DownloadDocumentsLoading");
 
     final status = await Permission.storage.request();
@@ -470,20 +489,5 @@ class ChattingController extends ChangeNotifier {
     // print("fileExist2 : $fileExist");
     // emit(CheckFileExitState());
     // print("CheckFileExitState");
-  }
-
-  // int? progress = 0;
-  // void progres(int prog) {
-  //   progress = prog;
-  //   changeProgress(progrss: progress);
-  //   emit(ProgressState());
-  // }
-  int? progress = 0;
-  void changeProgress({MessageModel? model, int? prog}) {
-    progress = prog;
-    model!.progress = progress;
-    print("messageModel.progress ${progress}");
-    // print("messageModel.progress ${model.progress}");
-    // emit(ProgressState());
   }
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, sized_box_for_whitespace
 
+import 'package:communication/Setting_view.dart';
 import 'package:communication/components/app_colors.dart';
 import 'package:communication/components/widgets/my_text.dart';
 import 'package:communication/user/widgets/my_drawer_items.dart';
@@ -34,11 +35,11 @@ class MyDrawer extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          // Navigator.pushReplacement(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => SettingView(),
-                          //     ));
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SettingView(),
+                              ));
                         },
                         child: CircleAvatar(
                           radius: 30.sp,

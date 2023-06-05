@@ -1,14 +1,13 @@
-// ignore_for_file: must_be_immutable, avoid_unnecessary_containers, avoid_print
+// ignore_for_file: must_be_immutable, avoid_unnecessary_containers, avoid_print, unnecessary_import, sized_box_for_whitespace
 
-import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:communication/chatting/controller/chatting_controller.dart';
+import 'package:communication/chatting/model/message_model.dart';
 import 'package:communication/components/widgets/my_text.dart';
-import 'package:communication/module/message_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:intl/intl.dart';
 
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
@@ -65,50 +64,17 @@ class _MyMessageState extends State<MyMessage> {
         position = newPosition;
       });
     });
-    //* chick folder staus (faild - completed - run -......)
-    // IsolateNameServer.registerPortWithName(
-    //     port.sendPort, 'downloader_send_port');
-    print("logprogress: ${widget.index}");
-
-    // port.listen((dynamic data) {
-    //   // print("Myprogress");
-
-    //   print("iiiiii : ${widget.index}");
-    //   print("lllll : ${data.toString()}");
-
-    //   // setState(() {
-    //   //   progress = data[2];
-    //   // });
-    //   // print("progress : $progress");
-
-    //   // ChattingCubit.get(context).prog = data[2];
-
-    //   // ChattingCubit.get(context)
-    //   //     .changeProgress(model: widget.messageModel, prog: data[2]);
-    //   // print("progress : ${ChattingCubit.get(context).prog}");
-    //   // print("progress${ChattingCubit.get(context).prog}");
-    // });
-
-    // FlutterDownloader.registerCallback(downloadCallback);
   }
-
-//* Call back to download file
-  // static void downloadCallback(id, status, progress) async {
-  //   IsolateNameServer.lookupPortByName('downloader_send_port')
-  //       ?.send([id, status, progress]);
-  // }
 
   @override
   Widget build(BuildContext context) {
-    // var cubit = ChattingCubit.get(context);
-
     return Padding(
       padding: EdgeInsets.only(right: 2.h, top: 2.h),
       child: Align(
           alignment: AlignmentDirectional.topEnd,
           child: widget.messageModel!.text != null ||
                   widget.messageModel!.docsUrl != null
-              //* spicail to text
+              //* spicail to duc
               ? Container(
                   margin: EdgeInsets.only(left: 25.h),
                   decoration: BoxDecoration(
@@ -133,24 +99,8 @@ class _MyMessageState extends State<MyMessage> {
                                             "${widget.messageModel!.docsName}");
 
                                 print("Download is done");
-
-                                // OpenFilex.open(
-                                //     "/storage/emulated/0/Android/data/com.example.telegram/files/Coronel_PPT_Ch01 (3).pdf");
-
-                                // }
                               },
                               child: Row(children: [
-                                // widget.index == widget.index?
-
-                                // Text("${widget.messageModel!.progress ?? 0}"),
-                                //     ?
-                                // Text(
-                                //     "%${ChattingCubit.get(context).messages![widget.index!].progress} "),
-                                // : Text("%${0}"),
-                                // const Icon(Icons.file_copy_outlined),
-                                // SizedBox(
-                                //   width: 1.h,
-                                // ),
                                 Expanded(
                                   child: MyText(
                                     text: "${widget.messageModel!.docsName}",
@@ -159,44 +109,54 @@ class _MyMessageState extends State<MyMessage> {
                                 )
                               ]),
                             )
-                          : MyText(
-                              text: "${widget.messageModel!.text}",
-                              fontSize: 15.sp,
-                            )
-                      // : Image(image: NetworkImage("${messageModel!.image}"),fit: BoxFit.cover,)
-                      ),
+                          //* spicail to text
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                MyText(
+                                  text: "${widget.messageModel!.text}",
+                                  fontSize: 15.sp,
+                                ),
+                                SizedBox(
+                                  height: 1.h,
+                                ),
+                                MyText(
+                                  text:
+                                      "${DateFormat('h:m a').format(DateTime.parse(widget.messageModel!.dateTime!))}",
+                                  fontSize: 8.sp,
+                                ),
+                              ],
+                            )),
                 )
 
               //* spicail to image
               : widget.messageModel!.image != null
                   ? Container(
-                      width: 40.h,
-                      height: 40.w,
+                      width: 60.w,
+                      // height: 30.h,
                       decoration: BoxDecoration(
                           color: Colors.green[300]!.withOpacity(.5),
                           borderRadius: const BorderRadiusDirectional.only(
                               bottomEnd: Radius.circular(10),
                               topStart: Radius.circular(10),
                               bottomStart: Radius.circular(10))),
-                      child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
+                      padding: EdgeInsets.all(1.5.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          InkWell(
                             onTap: () {
-                              
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return Container(
                                       height:
                                           MediaQuery.of(context).size.height,
-                                     
                                       child: PhotoView(
                                         imageProvider: NetworkImage(
                                           "${widget.messageModel!.image}",
                                         ),
-                                      )
-                                      
-                                      );
+                                      ));
                                 },
                               );
                               print("object");
@@ -206,7 +166,17 @@ class _MyMessageState extends State<MyMessage> {
                                   NetworkImage("${widget.messageModel!.image}"),
                               fit: BoxFit.cover,
                             ),
-                          )),
+                          ),
+                          SizedBox(
+                            height: 1.h,
+                          ),
+                          MyText(
+                            text:
+                                "${DateFormat('h:m a').format(DateTime.parse(widget.messageModel!.dateTime!))}",
+                            fontSize: 8.sp,
+                          ),
+                        ],
+                      ),
                     )
                   //* spicail to record message
                   : Container(
@@ -219,9 +189,10 @@ class _MyMessageState extends State<MyMessage> {
                               topStart: Radius.circular(10),
                               bottomStart: Radius.circular(10))),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               InkWell(
                                 onTap: () {
@@ -244,29 +215,51 @@ class _MyMessageState extends State<MyMessage> {
                                       : const Icon(Icons.play_arrow),
                                 ),
                               ),
-                              Expanded(
-                                child: Slider(
-                                  min: 0,
-                                  max: duration.inSeconds.toDouble(),
-                                  value: position.inSeconds.toDouble(),
-                                  thumbColor: Colors.green,
-                                  activeColor: Colors.green[900],
-                                  onChanged: (value) {
-                                    final position =
-                                        Duration(seconds: value.toInt());
-                                    audioPlayer.seek(position);
-                                    audioPlayer.resume();
-                                  },
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 3.h,),
+                                  SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      //* remove padding from slider
+                                      overlayShape:
+                                          SliderComponentShape.noThumb,
+                                      // trackHeight: 2.0,
+                                      thumbColor: Colors.green,
+                                      thumbShape: RoundSliderThumbShape(
+                                          enabledThumbRadius: 0.sp),
+                                    ),
+                                    child: Slider(
+                                      min: 0,
+                                      max: duration.inSeconds.toDouble(),
+                                      value: position.inSeconds.toDouble(),
+                                      thumbColor: Colors.green,
+                                      activeColor: Colors.green[900],
+                                      onChanged: (value) {
+                                        final position =
+                                            Duration(seconds: value.toInt());
+                                        audioPlayer.seek(position);
+                                        audioPlayer.resume();
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: 2.h,),
+                                  MyText(text: formatTime(
+                                      (duration - position).inSeconds),fontSize: 10.sp),
+                                ],
                               )
                             ],
                           ),
-                          Row(
-                            children: [
-                              // Text(formatTime(position.inSeconds)),
-                              Spacer(),
-                              Text(formatTime((duration - position).inSeconds)),
-                            ],
+                          // const Spacer(),
+
+                          SizedBox(
+                            height: 1.h,
+                          ),
+                          MyText(
+                            text:
+                                "${DateFormat('h:m a').format(DateTime.parse(widget.messageModel!.dateTime!))}",
+                            fontSize: 8.sp,
                           ),
                         ],
                       ),

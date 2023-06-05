@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-import '../chatting/controller/chatting_controller.dart';
 
 class UserView extends StatefulWidget {
   const UserView({super.key});
@@ -22,7 +21,6 @@ class _UserViewState extends State<UserView> {
   @override
   void initState() {
     Provider.of<UserController>(context, listen: false).getAllUser();
-    // Provider.of<ChattingController>(context, listen: false).resetMessages();
 
     super.initState();
   }
@@ -50,9 +48,9 @@ class _UserViewState extends State<UserView> {
               size: 20.sp,
             )),
       ),
-      //*==================================
+      //*=============================================
       //* list of users that have Application
-      //*==================================HomeCubit.get(context).countUsers!.length == 0
+      //*=============================================
       body: Provider.of<UserController>(context, listen: true)
                   .countUsers!
                   .length ==
