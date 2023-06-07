@@ -35,7 +35,7 @@ class MyDrawer extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => SettingView(),

@@ -20,6 +20,7 @@ class UserController extends ChangeNotifier {
         countUsers!.add(UserModel.fromJson(element.data()));
       }
     });
+    
     print("countUsers : ${countUsers!.length}");
     notifyListeners();
   }

@@ -2,10 +2,15 @@
 
 import 'dart:ui';
 
+import 'package:animations/animations.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:communication/chatting/controller/chatting_controller.dart';
 import 'package:communication/chatting/model/message_model.dart';
+import 'package:communication/chatting/views/chatting_view.dart';
+import 'package:communication/chatting/views/display_image.dart';
 import 'package:communication/components/widgets/my_text.dart';
+import 'package:communication/home/home_view.dart';
+import 'package:communication/module/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -16,11 +21,13 @@ import 'package:sizer/sizer.dart';
 class MyMessage extends StatefulWidget {
   MyMessage({
     super.key,
-    this.messageModel,
     this.index,
+    this.messageModel,
+    this.userModel,
   });
   int? index;
   MessageModel? messageModel;
+  UserModel? userModel;
   // String? fileName;
 
   @override
@@ -40,11 +47,6 @@ class _MyMessageState extends State<MyMessage> {
     return "${Duration(seconds: seconds)}".split(".")[0].padLeft(8, "0");
   }
 
-  // ReceivePort port = ReceivePort();
-  // int progress = 0;
-  // DownloadTaskStatus? status;
-  // int? progress = 0;
-  // String? id;
   @override
   void initState() {
     super.initState();
@@ -120,11 +122,25 @@ class _MyMessageState extends State<MyMessage> {
                                 SizedBox(
                                   height: 1.h,
                                 ),
-                                MyText(
-                                  text:
-                                      "${DateFormat('h:m a').format(DateTime.parse(widget.messageModel!.dateTime!))}",
-                                  fontSize: 8.sp,
-                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    MyText(
+                                      text: DateFormat('h:m a').format(
+                                          DateTime.parse(
+                                              widget.messageModel!.dateTime!)),
+                                      fontSize: 8.sp,
+                                    ),
+                                    Icon(Icons.done_all,
+                                        size: 10.sp,
+                                        color: Provider.of<ChattingController>(
+                                                        context)
+                                                    .isSeen ==
+                                                true
+                                            ? Colors.lightBlue
+                                            : Colors.black87)
+                                  ],
+                                )
                               ],
                             )),
                 )
@@ -140,7 +156,8 @@ class _MyMessageState extends State<MyMessage> {
                               bottomEnd: Radius.circular(10),
                               topStart: Radius.circular(10),
                               bottomStart: Radius.circular(10))),
-                      padding: EdgeInsets.all(1.5.h),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -170,10 +187,23 @@ class _MyMessageState extends State<MyMessage> {
                           SizedBox(
                             height: 1.h,
                           ),
-                          MyText(
-                            text:
-                                "${DateFormat('h:m a').format(DateTime.parse(widget.messageModel!.dateTime!))}",
-                            fontSize: 8.sp,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              MyText(
+                                text: DateFormat('h:m a').format(DateTime.parse(
+                                    widget.messageModel!.dateTime!)),
+                                fontSize: 8.sp,
+                              ),
+                              Icon(Icons.done_all,
+                                  size: 10.sp,
+                                  color:
+                                      Provider.of<ChattingController>(context)
+                                                  .isSeen ==
+                                              true
+                                          ? Colors.lightBlue
+                                          : Colors.black87)
+                            ],
                           ),
                         ],
                       ),
@@ -219,7 +249,9 @@ class _MyMessageState extends State<MyMessage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SizedBox(height: 3.h,),
+                                  SizedBox(
+                                    height: 3.h,
+                                  ),
                                   SliderTheme(
                                     data: SliderTheme.of(context).copyWith(
                                       //* remove padding from slider
@@ -244,9 +276,13 @@ class _MyMessageState extends State<MyMessage> {
                                       },
                                     ),
                                   ),
-                                  SizedBox(height: 2.h,),
-                                  MyText(text: formatTime(
-                                      (duration - position).inSeconds),fontSize: 10.sp),
+                                  SizedBox(
+                                    height: 2.h,
+                                  ),
+                                  MyText(
+                                      text: formatTime(
+                                          (duration - position).inSeconds),
+                                      fontSize: 10.sp),
                                 ],
                               )
                             ],
@@ -256,10 +292,23 @@ class _MyMessageState extends State<MyMessage> {
                           SizedBox(
                             height: 1.h,
                           ),
-                          MyText(
-                            text:
-                                "${DateFormat('h:m a').format(DateTime.parse(widget.messageModel!.dateTime!))}",
-                            fontSize: 8.sp,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              MyText(
+                                text: DateFormat('h:m a').format(DateTime.parse(
+                                    widget.messageModel!.dateTime!)),
+                                fontSize: 8.sp,
+                              ),
+                              Icon(Icons.done_all,
+                                  size: 10.sp,
+                                  color:
+                                      Provider.of<ChattingController>(context)
+                                                  .isSeen ==
+                                              true
+                                          ? Colors.lightBlue
+                                          : Colors.black87)
+                            ],
                           ),
                         ],
                       ),

@@ -1,10 +1,11 @@
-// ignore_for_file: must_be_immutable, avoid_print
+// ignore_for_file: must_be_immutable, avoid_print, sized_box_for_whitespace
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:communication/chatting/controller/chatting_controller.dart';
 import 'package:communication/chatting/model/message_model.dart';
 import 'package:communication/components/widgets/my_text.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -50,6 +51,8 @@ class _ReceiveMessageState extends State<ReceiveMessage> {
         position = newPosition;
       });
     });
+    
+    // print("${widget.messageModel!.receiverId}");
     //* chick folder staus (faild - completed - run -......)
     // IsolateNameServer.registerPortWithName(
     //     port.sendPort, 'downloader_send_port');
@@ -103,7 +106,7 @@ class _ReceiveMessageState extends State<ReceiveMessage> {
                               topEnd: Radius.circular(10),
                               bottomStart: Radius.circular(10))),
                       child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.symmetric(horizontal: 2.w),
                           child: widget.messageModel!.text == null
                               ?
                               //* spicail to documents
@@ -132,29 +135,42 @@ class _ReceiveMessageState extends State<ReceiveMessage> {
                                     )
                                   ]),
                                 )
-                              : Container(
-                                  child: MyText(
-                                    text: "${widget.messageModel!.text}",
-                                    fontSize: 15.sp,
-                                    textAlig: TextAlign.center,
-                                  ),
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    MyText(
+                                      text: "${widget.messageModel!.text}",
+                                      fontSize: 15.sp,
+                                    ),
+                                    SizedBox(
+                                      height: 1.h,
+                                    ),
+                                    MyText(
+                                      text: DateFormat('h:m a').format(
+                                          DateTime.parse(
+                                              widget.messageModel!.dateTime!)),
+                                      fontSize: 8.sp,
+                                    ),
+                                  ],
                                 )),
                     )
 
                   //* spicail to image
                   : widget.messageModel!.image != null
                       ? Container(
-                          width: 40.h,
-                          height: 40.w,
+                          width: 60.w,
                           decoration: BoxDecoration(
                               color: Colors.white.withOpacity(.5),
                               borderRadius: const BorderRadiusDirectional.only(
                                   bottomEnd: Radius.circular(10),
                                   topStart: Radius.circular(10),
                                   bottomStart: Radius.circular(10))),
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 3.w, vertical: 1.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              InkWell(
                                 onTap: () {
                                   showDialog(
                                     context: context,
@@ -177,7 +193,17 @@ class _ReceiveMessageState extends State<ReceiveMessage> {
                                       "${widget.messageModel!.image}"),
                                   fit: BoxFit.cover,
                                 ),
-                              )),
+                              ),
+                              SizedBox(
+                                height: 1.h,
+                              ),
+                              MyText(
+                                text: DateFormat('h:m a').format(DateTime.parse(
+                                    widget.messageModel!.dateTime!)),
+                                fontSize: 8.sp,
+                              ),
+                            ],
+                          ),
                         )
                       //* spicail to record message
                       : Container(
@@ -190,9 +216,11 @@ class _ReceiveMessageState extends State<ReceiveMessage> {
                                   topEnd: Radius.circular(10),
                                   bottomStart: Radius.circular(10))),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   InkWell(
                                     onTap: () {
@@ -215,29 +243,56 @@ class _ReceiveMessageState extends State<ReceiveMessage> {
                                           : const Icon(Icons.play_arrow),
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Slider(
-                                      min: 0,
-                                      max: duration.inSeconds.toDouble(),
-                                      value: position.inSeconds.toDouble(),
-                                      thumbColor: Colors.green,
-                                      activeColor: Colors.green[900],
-                                      onChanged: (value) {
-                                        final position =
-                                            Duration(seconds: value.toInt());
-                                        audioPlayer.seek(position);
-                                        audioPlayer.resume();
-                                      },
-                                    ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 3.h,
+                                      ),
+                                      SliderTheme(
+                                        data: SliderTheme.of(context).copyWith(
+                                          //* remove padding from slider
+                                          overlayShape:
+                                              SliderComponentShape.noThumb,
+                                          // trackHeight: 2.0,
+                                          thumbColor: Colors.green,
+                                          thumbShape: RoundSliderThumbShape(
+                                              enabledThumbRadius: 0.sp),
+                                        ),
+                                        child: Slider(
+                                          min: 0,
+                                          max: duration.inSeconds.toDouble(),
+                                          value: position.inSeconds.toDouble(),
+                                          thumbColor: Colors.green,
+                                          activeColor: Colors.green[900],
+                                          onChanged: (value) {
+                                            final position = Duration(
+                                                seconds: value.toInt());
+                                            audioPlayer.seek(position);
+                                            audioPlayer.resume();
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 2.h,
+                                      ),
+                                      MyText(
+                                          text: formatTime(
+                                              (duration - position).inSeconds),
+                                          fontSize: 10.sp),
+                                    ],
                                   )
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  const Spacer(),
-                                  Text(formatTime(
-                                      (duration - position).inSeconds)),
-                                ],
+                              SizedBox(
+                                height: 1.h,
+                              ),
+                              MyText(
+                                text: DateFormat('h:m a').format(DateTime.parse(
+                                    widget.messageModel!.dateTime!)),
+                                fontSize: 8.sp,
                               ),
                             ],
                           ),

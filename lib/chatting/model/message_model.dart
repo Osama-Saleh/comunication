@@ -9,6 +9,7 @@ class MessageModel {
   String? docsUrl;
   String? docsName;
   String? docsLocation;
+  String? seen;
   int? progress;
   bool? onceRecordPlaying = true;
   MessageModel({
@@ -21,6 +22,7 @@ class MessageModel {
     this.docsUrl,
     this.docsName,
     this.docsLocation,
+    this.seen,
     this.progress,
     this.onceRecordPlaying,
   });
@@ -36,6 +38,7 @@ class MessageModel {
       'docsUrl': docsUrl,
       'docsName': docsName,
       'docsLocation': docsLocation,
+      'seen': seen,
       'progress': progress,
       'onceRecordPlaying': onceRecordPlaying,
     };
@@ -52,6 +55,7 @@ class MessageModel {
       docsUrl: map['docsUrl'],
       docsName: map['docsName'],
       docsLocation: map['docsLocation'],
+      seen: map['seen'],
       progress: map['progress'],
       onceRecordPlaying: map['onceRecordPlaying'],
     );

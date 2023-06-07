@@ -59,7 +59,38 @@ class ChattingController extends ChangeNotifier {
     notifyListeners();
   }
 
+//*===============================================================
+//*
+//*===============================================================
   ScrollController scrollController = ScrollController();
+  bool isIconVisible = false;
+  void scrollListener() {
+    
+    if (scrollController.offset >= scrollController.position.maxScrollExtent) {
+      //* Scrolled to the bottom
+      isIconVisible = false;
+      notifyListeners();
+    } else {
+      //* Scrolled within the list
+      isIconVisible = true;
+      notifyListeners();
+    }
+  }
+
+  void scrollToLastListView() {
+    Future.delayed(
+      const Duration(milliseconds: 1000),
+      () {
+        // Provider.of<ChattingController>(context,
+        //         listen: false)
+        //     .seeMessage();
+
+        scrollController.animateTo(scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+      },
+    );
+  }
+
   var formKey = GlobalKey<FormState>();
   bool isEmojiSelected = false;
   void selectEmoji() {
@@ -79,6 +110,7 @@ class ChattingController extends ChangeNotifier {
     String? docsUrl,
     String? docsName,
     String? docsLocation,
+    String? seen,
   }) async {
     print("send notify loadin");
     MessageModel messageModel = MessageModel(
@@ -91,6 +123,7 @@ class ChattingController extends ChangeNotifier {
       docsUrl: docsUrl,
       docsName: docsName,
       docsLocation: docsLocation,
+      seen: seen ?? "",
     );
     //* my chat
     FirebaseFirestore.instance
@@ -132,6 +165,14 @@ class ChattingController extends ChangeNotifier {
   //   messages = [];
   //   notifyListeners();
   // }
+  //*==============================================================
+  //*                        is seen message
+  //*==============================================================
+  bool isSeen = false;
+  void seeMessage() {
+    isSeen = true;
+    notifyListeners();
+  }
 
   Future<void> getMessage({
     String? receiverId,
@@ -158,6 +199,29 @@ class ChattingController extends ChangeNotifier {
       notifyListeners();
     });
   }
+  //*=======================================================================
+  //*                      Update Message (seen state)
+  //*=======================================================================
+
+  // Future<void> updateMessage({
+  //   String? receiverId,
+  //   String? text,
+  //   String? dateTime,
+  //   String? image,
+  //   String? record,
+  //   String? docsUrl,
+  //   String? docsName,
+  //   String? docsLocation,
+  //   String? seen,
+  // })async{
+  //    FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(receiverId)
+  //       .collection("Chats")
+  //       .doc(MyConst.uidUser)
+  //       .collection("Messages").doc()
+
+  // }
 
 //*=======================================================================
 //*                      get image from device

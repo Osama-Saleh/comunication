@@ -11,7 +11,6 @@ import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:sizer/sizer.dart';
 
-
 class SettingView extends StatefulWidget {
   SettingView({super.key});
 
@@ -30,14 +29,11 @@ class _SettingViewState extends State<SettingView> {
     scrollController.addListener(() {
       setState(() {});
     });
-    
   }
-
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Scaffold(
+    return Scaffold(
         backgroundColor: AppColor.white,
         body: Stack(
           children: [
@@ -49,7 +45,7 @@ class _SettingViewState extends State<SettingView> {
                 //*===================================================
                 SliverAppBar(
                   backgroundColor: AppColor.darkBlue,
-                  expandedHeight:200,
+                  expandedHeight: 200,
                   toolbarHeight: 8.h,
                   pinned: true,
                   flexibleSpace: LayoutBuilder(
@@ -59,10 +55,11 @@ class _SettingViewState extends State<SettingView> {
                         title: Row(
                           children: [
                             AnimatedOpacity(
-                              duration:const Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 300),
                               opacity: top <= 130 ? 1.0 : 0.0,
-                              child:const CircleAvatar(
-                                backgroundImage: NetworkImage("https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg"),
+                              child: const CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    "https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg"),
                               ),
                             ),
                             MyText(
@@ -72,7 +69,7 @@ class _SettingViewState extends State<SettingView> {
                           ],
                         ),
                         centerTitle: false,
-                        background:const Image(
+                        background: const Image(
                             fit: BoxFit.cover,
                             image: NetworkImage(
                                 "https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg")),
@@ -81,11 +78,12 @@ class _SettingViewState extends State<SettingView> {
                   ),
                   leading: MyIconButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>const HomeView(),
-                          ));
+                      Navigator.pop(context);
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const HomeView(),
+                      //     ));
                     },
                     icon: Icons.arrow_back,
                   ),
