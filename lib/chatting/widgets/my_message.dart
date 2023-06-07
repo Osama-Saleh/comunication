@@ -8,9 +8,11 @@ import 'package:communication/chatting/controller/chatting_controller.dart';
 import 'package:communication/chatting/model/message_model.dart';
 import 'package:communication/chatting/views/chatting_view.dart';
 import 'package:communication/chatting/views/display_image.dart';
+import 'package:communication/components/app_colors.dart';
 import 'package:communication/components/widgets/my_text.dart';
 import 'package:communication/home/home_view.dart';
 import 'package:communication/module/user_model.dart';
+import 'package:communication/user/controller/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -163,19 +165,77 @@ class _MyMessageState extends State<MyMessage> {
                         children: [
                           InkWell(
                             onTap: () {
-                              showDialog(
+                              showGeneralDialog(
                                 context: context,
-                                builder: (BuildContext context) {
-                                  return Container(
-                                      height:
-                                          MediaQuery.of(context).size.height,
-                                      child: PhotoView(
-                                        imageProvider: NetworkImage(
-                                          "${widget.messageModel!.image}",
+                                barrierColor: Colors.black12
+                                    .withOpacity(0.6), // Background color
+                                barrierDismissible: false,
+                                barrierLabel: 'Dialog',
+                                transitionDuration: Duration(milliseconds: 400),
+                                pageBuilder: (_, __, ___) {
+                                  return Column(
+                                    children: <Widget>[
+                                      // Expanded(
+                                      //   flex: 1,
+                                      //   child: SizedBox.expand(
+                                      //     child: Row(
+                                      //       children: [
+
+                                      //         SizedBox(
+                                      //           width: 3.w,
+                                      //         ),
+                                      //         ,
+                                      //       ],
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      Expanded(
+                                        flex: 5,
+                                        child: MaterialApp(
+                                          debugShowCheckedModeBanner: false,
+                                          builder: (context, child) {
+                                            return Scaffold(
+                                              extendBodyBehindAppBar: true,
+                                              appBar: AppBar(
+                                                backgroundColor: AppColor.black
+                                                    .withAlpha(200),
+                                                title: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    MyText(
+                                                      text:
+                                                          "${Provider.of<UserController>(context).myData!.name}",
+                                                      fontSize: 15.sp,
+                                                    ),
+                                                    MyText(
+                                                      text: DateFormat('h:m a')
+                                                          .format(DateTime
+                                                              .parse(widget
+                                                                  .messageModel!
+                                                                  .dateTime!)),
+                                                      fontSize: 8.sp,
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              body: Container(
+                                                color: Colors.amber,
+                                                height: double.infinity,
+                                                child: PhotoView(
+                                                  imageProvider: NetworkImage(
+                                                    "${widget.messageModel!.image}",
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      ));
+                                      ),
+                                    ],
+                                  );
                                 },
                               );
+                              ;
                               print("object");
                             },
                             child: Image(

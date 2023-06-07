@@ -10,17 +10,20 @@ class UserController extends ChangeNotifier {
   //?========= Get All user in application =======
   //*=============================================
   List<UserModel>? countUsers;
+  UserModel? myData;
   Future getAllUser() async {
-    
     countUsers = [];
     var value = await FirebaseFirestore.instance.collection('users').get();
     value.docs.forEach((element) {
       print(" element ${element.data()}");
       if (element.data()["token"] != MyConst.uidUser) {
         countUsers!.add(UserModel.fromJson(element.data()));
+      } else if (element.data()["token"] == MyConst.uidUser) {
+        myData = UserModel.fromJson(element.data());
+        print("${myData!.name}");
       }
     });
-    
+
     print("countUsers : ${countUsers!.length}");
     notifyListeners();
   }

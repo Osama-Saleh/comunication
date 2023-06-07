@@ -35,54 +35,60 @@ class _ChattingState extends State<ChattingView> {
     Provider.of<ChattingController>(context, listen: false).initRecorder();
     Provider.of<ChattingController>(context, listen: false)
         .getMessage(receiverId: "${widget.model!.token}");
-    // Provider.of<ChattingController>(context, listen: false)
-    //     .scrollController
-    //     .addListener(() {
-    //   scrollListener();
-    // });
-    if (mounted) {
-      Provider.of<ChattingController>(context, listen: false)
-          .scrollController
-          .addListener(() {
-        Provider.of<ChattingController>(context, listen: false)
-            .scrollListener();
-      });
-      Future.delayed(
-        const Duration(milliseconds: 1000),
-        () {
-          Provider.of<ChattingController>(context, listen: false).seeMessage();
 
-          // Provider.of<ChattingController>(context,listen: false).scrollToLastListView();
-          Provider.of<ChattingController>(context, listen: false)
-              .scrollController
-              .animateTo(
-                  Provider.of<ChattingController>(context, listen: false)
-                      .scrollController
-                      .position
-                      .maxScrollExtent,
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.easeIn);
-        },
-      );
-    }
+    Provider.of<ChattingController>(context, listen: false)
+        .scrollController
+        .addListener(() {
+      Provider.of<ChattingController>(context, listen: false).scrollListener();
+    });
+    Future.delayed(
+      const Duration(milliseconds: 1000),
+      () {
+        Provider.of<ChattingController>(context, listen: false).seeMessage();
+        // Provider.of<ChattingController>(context,listen: false).scrollToLastListView();
+        Provider.of<ChattingController>(context, listen: false)
+            .scrollController
+            .animateTo(
+                Provider.of<ChattingController>(context, listen: false)
+                    .scrollController
+                    .position
+                    .maxScrollExtent,
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeIn);
+      },
+    );
+    // }
   }
 
+  ScrollController scrollController = ScrollController();
   @override
   void dispose() {
     // TODO: implement dispose
 
-    if (mounted) {
-      Provider.of<ChattingController>(context, listen: false)
-          .scrollController
-          .dispose();
-    }
-    // SchedulerBinding.instance.addPostFrameCallback((_) {
+    // if (mounted) {
     //   Provider.of<ChattingController>(context, listen: false)
     //       .scrollController
     //       .dispose();
-    // });
+    // }
+
+    if (mounted) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        scrollController.removeListener(() {});
+      });
+    }
     super.dispose();
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   if (mounted) {
+  //     SchedulerBinding.instance.addPostFrameCallback((_) {
+  //       Provider.of<ChattingController>(context, listen: false)
+  //           .scrollController;
+  //     });
+  //   }
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -130,11 +136,7 @@ class _ChattingState extends State<ChattingView> {
         ),
         leading: MyIconButton(
           onPressed: () {
-            Navigator.of(context).pop();
-            //* wait for completing the state before navigating to another screen
-            // SchedulerBinding.instance.addPostFrameCallback((_) {
-            //   Navigator.pop(context);
-            // });  
+            Navigator.of(context).popAndPushNamed("/userView");
           },
           icon: Icons.arrow_back,
         ),
@@ -159,8 +161,8 @@ class _ChattingState extends State<ChattingView> {
                       : Stack(
                           children: [
                             ListView.separated(
-                                // controller:
-                                //     providerListenFalse.scrollController,
+                                controller:
+                                    providerListenFalse.scrollController,
                                 itemBuilder: (context, index) {
                                   if (MyConst.uidUser ==
                                       providerListenFalse
@@ -169,7 +171,7 @@ class _ChattingState extends State<ChattingView> {
                                     return MyMessage(
                                       messageModel:
                                           providerListenFalse.messages![index],
-                                          userModel: widget.model,
+                                      userModel: widget.model,
                                       // index: index,
                                       // fileName: cubit.fileName![index],
                                     );
