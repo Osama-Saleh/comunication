@@ -79,7 +79,8 @@ class MyApp extends StatelessWidget {
                 primarySwatch: Colors.blue,
               ),
               
-              home: widget,
+              home: 
+              widget,
               routes: {
                 "/userView" :(context) => UserView()
               },

@@ -45,8 +45,15 @@ class _MyMessageState extends State<MyMessage> {
 
   Duration position = Duration.zero;
 
-  String formatTime(int seconds) {
-    return "${Duration(seconds: seconds)}".split(".")[0].padLeft(8, "0");
+  String formatTimeHour(int seconds) {
+    return "${Duration(seconds: seconds)}".split(".")[0].padRight(6, "8");
+  }
+
+  String transformString(int seconds) {
+    String minuteString =
+        "${(seconds/60).floor() < 10 ? 0 : ""}${(seconds / 60).floor()}";
+    String secondString = "${seconds % 60 < 10 ? 0 : ""}${seconds % 60}";
+    return "$minuteString : $secondString";
   }
 
   @override
@@ -124,24 +131,11 @@ class _MyMessageState extends State<MyMessage> {
                                 SizedBox(
                                   height: 1.h,
                                 ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    MyText(
-                                      text: DateFormat('h:m a').format(
-                                          DateTime.parse(
-                                              widget.messageModel!.dateTime!)),
-                                      fontSize: 8.sp,
-                                    ),
-                                    Icon(Icons.done_all,
-                                        size: 10.sp,
-                                        color: Provider.of<ChattingController>(
-                                                        context)
-                                                    .isSeen ==
-                                                true
-                                            ? Colors.lightBlue
-                                            : Colors.black87)
-                                  ],
+                                MyText(
+                                  text: DateFormat('h:m a').format(
+                                      DateTime.parse(
+                                          widget.messageModel!.dateTime!)),
+                                  fontSize: 8.sp,
                                 )
                               ],
                             )),
@@ -152,9 +146,9 @@ class _MyMessageState extends State<MyMessage> {
                   ? Container(
                       width: 60.w,
                       // height: 30.h,
-                      decoration: BoxDecoration(
-                          color: Colors.green[300]!.withOpacity(.5),
-                          borderRadius: const BorderRadiusDirectional.only(
+                      decoration: const BoxDecoration(
+                          // color: Colors.green[300]!.withOpacity(.5),
+                          borderRadius: BorderRadiusDirectional.only(
                               bottomEnd: Radius.circular(10),
                               topStart: Radius.circular(10),
                               bottomStart: Radius.circular(10))),
@@ -175,20 +169,6 @@ class _MyMessageState extends State<MyMessage> {
                                 pageBuilder: (_, __, ___) {
                                   return Column(
                                     children: <Widget>[
-                                      // Expanded(
-                                      //   flex: 1,
-                                      //   child: SizedBox.expand(
-                                      //     child: Row(
-                                      //       children: [
-
-                                      //         SizedBox(
-                                      //           width: 3.w,
-                                      //         ),
-                                      //         ,
-                                      //       ],
-                                      //     ),
-                                      //   ),
-                                      // ),
                                       Expanded(
                                         flex: 5,
                                         child: MaterialApp(
@@ -200,7 +180,8 @@ class _MyMessageState extends State<MyMessage> {
                                                 backgroundColor: AppColor.black
                                                     .withAlpha(200),
                                                 title: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
                                                   children: [
                                                     MyText(
                                                       text:
@@ -247,24 +228,11 @@ class _MyMessageState extends State<MyMessage> {
                           SizedBox(
                             height: 1.h,
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              MyText(
-                                text: DateFormat('h:m a').format(DateTime.parse(
-                                    widget.messageModel!.dateTime!)),
-                                fontSize: 8.sp,
-                              ),
-                              Icon(Icons.done_all,
-                                  size: 10.sp,
-                                  color:
-                                      Provider.of<ChattingController>(context)
-                                                  .isSeen ==
-                                              true
-                                          ? Colors.lightBlue
-                                          : Colors.black87)
-                            ],
-                          ),
+                          MyText(
+                            text: DateFormat('h:m a').format(
+                                DateTime.parse(widget.messageModel!.dateTime!)),
+                            fontSize: 8.sp,
+                          )
                         ],
                       ),
                     )
@@ -339,8 +307,12 @@ class _MyMessageState extends State<MyMessage> {
                                   SizedBox(
                                     height: 2.h,
                                   ),
+                                  // MyText(
+                                  //     text: formatTime(
+                                  //         (duration - position).inSeconds),
+                                  //     fontSize: 10.sp),
                                   MyText(
-                                      text: formatTime(
+                                      text: transformString(
                                           (duration - position).inSeconds),
                                       fontSize: 10.sp),
                                 ],
@@ -352,23 +324,10 @@ class _MyMessageState extends State<MyMessage> {
                           SizedBox(
                             height: 1.h,
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              MyText(
-                                text: DateFormat('h:m a').format(DateTime.parse(
-                                    widget.messageModel!.dateTime!)),
-                                fontSize: 8.sp,
-                              ),
-                              Icon(Icons.done_all,
-                                  size: 10.sp,
-                                  color:
-                                      Provider.of<ChattingController>(context)
-                                                  .isSeen ==
-                                              true
-                                          ? Colors.lightBlue
-                                          : Colors.black87)
-                            ],
+                          MyText(
+                            text: DateFormat('h:m a').format(
+                                DateTime.parse(widget.messageModel!.dateTime!)),
+                            fontSize: 8.sp,
                           ),
                         ],
                       ),

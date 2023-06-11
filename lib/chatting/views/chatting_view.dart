@@ -29,6 +29,8 @@ class ChattingView extends StatefulWidget {
 }
 
 class _ChattingState extends State<ChattingView> {
+  ScrollController scrollController = ScrollController();
+  bool isIconVisible = false;
   @override
   void initState() {
     super.initState();
@@ -36,48 +38,57 @@ class _ChattingState extends State<ChattingView> {
     Provider.of<ChattingController>(context, listen: false)
         .getMessage(receiverId: "${widget.model!.token}");
 
-    Provider.of<ChattingController>(context, listen: false)
-        .scrollController
-        .addListener(() {
-      Provider.of<ChattingController>(context, listen: false).scrollListener();
+    // Provider.of<ChattingController>(context, listen: false)
+    //     .
+    scrollController.addListener(() {
+      if (scrollController.offset >=scrollController.position.maxScrollExtent) {
+        //* Scrolled to the bottom
+        isIconVisible = false;
+        print("Last");
+        setState(() {});
+      } else {
+        //* Scrolled within the list
+        isIconVisible = true;
+        print("not Last");
+        setState(() {});
+      }
+      // Provider.of<ChattingController>(context, listen: false).scrollListener();
     });
     Future.delayed(
       const Duration(milliseconds: 1000),
       () {
-        Provider.of<ChattingController>(context, listen: false).seeMessage();
         // Provider.of<ChattingController>(context,listen: false).scrollToLastListView();
-        Provider.of<ChattingController>(context, listen: false)
-            .scrollController
-            .animateTo(
-                Provider.of<ChattingController>(context, listen: false)
-                    .scrollController
-                    .position
-                    .maxScrollExtent,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeIn);
+        // Provider.of<ChattingController>(context, listen: false)
+        //     .
+        scrollController.animateTo(
+            // Provider.of<ChattingController>(context, listen: false)
+            // .
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeIn);
       },
     );
     // }
   }
 
-  ScrollController scrollController = ScrollController();
-  @override
-  void dispose() {
-    // TODO: implement dispose
+  // ScrollController scrollController = ScrollController();
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
 
-    // if (mounted) {
-    //   Provider.of<ChattingController>(context, listen: false)
-    //       .scrollController
-    //       .dispose();
-    // }
+  //   // if (mounted) {
+  //   //   Provider.of<ChattingController>(context, listen: false)
+  //   //       .scrollController
+  //   //       .dispose();
+  //   // }
 
-    if (mounted) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        scrollController.removeListener(() {});
-      });
-    }
-    super.dispose();
-  }
+  //   if (mounted) {
+  //     SchedulerBinding.instance.addPostFrameCallback((_) {
+  //       Provider.of<ChattingController>(context).scrollController.dispose();
+  //     });
+  //   }
+  //   super.dispose();
+  // }
 
   // @override
   // void didChangeDependencies() {
@@ -136,7 +147,7 @@ class _ChattingState extends State<ChattingView> {
         ),
         leading: MyIconButton(
           onPressed: () {
-            Navigator.of(context).popAndPushNamed("/userView");
+            Navigator.of(context).pop(context);
           },
           icon: Icons.arrow_back,
         ),
@@ -160,9 +171,11 @@ class _ChattingState extends State<ChattingView> {
                         )
                       : Stack(
                           children: [
-                            ListView.separated(
-                                controller:
-                                    providerListenFalse.scrollController,
+                            ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                                controller: scrollController,
+                                // providerListenFalse.scrollController ,
+
                                 itemBuilder: (context, index) {
                                   if (MyConst.uidUser ==
                                       providerListenFalse
@@ -184,45 +197,31 @@ class _ChattingState extends State<ChattingView> {
                                     index: index,
                                   );
                                 },
-                                separatorBuilder: (context, index) => SizedBox(
-                                      height: 5.h,
-                                    ),
+                                
                                 itemCount:
                                     providerListenFalse.messages!.length),
                             Positioned(
                               bottom: 2.h,
                               right: 3.w,
                               child: Visibility(
-                                visible: Provider.of<ChattingController>(
-                                        context,
-                                        listen: false)
-                                    .isIconVisible,
+                                visible: isIconVisible,
                                 child: InkWell(
                                   onTap: () {
                                     Future.delayed(
                                       const Duration(milliseconds: 1000),
                                       () {
-                                        // Provider.of<ChattingController>(context,
-                                        //         listen: false)
-                                        //     .seeMessage();
-                                        Provider.of<ChattingController>(context,
-                                                listen: false)
-                                            .scrollController
-                                            .animateTo(
-                                                Provider.of<ChattingController>(
-                                                        context,
-                                                        listen: false)
-                                                    .scrollController
-                                                    .position
-                                                    .maxScrollExtent,
-                                                duration: const Duration(
-                                                    milliseconds: 100),
-                                                curve: Curves.easeIn);
+                                        // providerListenFalse.
+                                        scrollController.animateTo(
+                                            // providerListenFalse
+                                            scrollController
+                                                .position.maxScrollExtent,
+                                            duration: const Duration(
+                                                milliseconds: 100),
+                                            curve: Curves.easeIn);
                                       },
                                     );
+
                                     print("Scrolled");
-                                    print(
-                                        "${Provider.of<ChattingController>(context, listen: false).scrollController.position.maxScrollExtent}");
                                   },
                                   child: Container(
                                     width: 12.w,
@@ -420,19 +419,18 @@ class _ChattingState extends State<ChattingView> {
                                           Future.delayed(
                                             const Duration(milliseconds: 1000),
                                             () {
-                                              providerListenFalse.seeMessage();
-                                              providerListenFalse
-                                                  .scrollController
-                                                  .animateTo(
-                                                      Provider.of<ChattingController>(
-                                                              context,
-                                                              listen: false)
-                                                          .scrollController
-                                                          .position
-                                                          .maxScrollExtent,
-                                                      duration: const Duration(
-                                                          milliseconds: 100),
-                                                      curve: Curves.easeIn);
+                                              // providerListenFalse
+                                              //     .
+                                              scrollController.animateTo(
+                                                  // Provider.of<ChattingController>(
+                                                  //         context,
+                                                  //         listen: false)
+                                                  //     .
+                                                  scrollController
+                                                      .position.maxScrollExtent,
+                                                  duration: const Duration(
+                                                      milliseconds: 100),
+                                                  curve: Curves.easeIn);
                                             },
                                           );
                                           print("MaxScroll");

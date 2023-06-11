@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:audioplayers/audioplayers.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -60,36 +61,51 @@ class ChattingController extends ChangeNotifier {
   }
 
 //*===============================================================
-//*
+//*                 Scrolled to the bottom List
 //*===============================================================
   ScrollController scrollController = ScrollController();
   bool isIconVisible = false;
   void scrollListener() {
-    
     if (scrollController.offset >= scrollController.position.maxScrollExtent) {
       //* Scrolled to the bottom
       isIconVisible = false;
+      print("Last");
       notifyListeners();
     } else {
       //* Scrolled within the list
       isIconVisible = true;
+      print("not Last");
       notifyListeners();
     }
   }
+  // bool isIconVisible = false;
+  // void scrollListener() {
+  //   if (scrollController.offset > scrollController.position.maxScrollExtent) {
+  //     //* Scrolled to the bottom
+  //     isIconVisible = false;
+  //     print("Last");
+  //     notifyListeners();
+  //   } else {
+  //     //* Scrolled within the list
+  //     isIconVisible = true;
+  //     print("not Last");
+  //     notifyListeners();
+  //   }
+  // }
 
-  void scrollToLastListView() {
-    Future.delayed(
-      const Duration(milliseconds: 1000),
-      () {
-        // Provider.of<ChattingController>(context,
-        //         listen: false)
-        //     .seeMessage();
+  // void scrollToLastListView() {
+  //   Future.delayed(
+  //     const Duration(milliseconds: 1000),
+  //     () {
+  //       // Provider.of<ChattingController>(context,
+  //       //         listen: false)
+  //       //     .seeMessage();
 
-        scrollController.animateTo(scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
-      },
-    );
-  }
+  //       scrollController.animateTo(scrollController.position.maxScrollExtent,
+  //           duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+  //     },
+  //   );
+  // }
 
   var formKey = GlobalKey<FormState>();
   bool isEmojiSelected = false;
@@ -110,7 +126,7 @@ class ChattingController extends ChangeNotifier {
     String? docsUrl,
     String? docsName,
     String? docsLocation,
-    String? seen,
+    
   }) async {
     print("send notify loadin");
     MessageModel messageModel = MessageModel(
@@ -123,7 +139,7 @@ class ChattingController extends ChangeNotifier {
       docsUrl: docsUrl,
       docsName: docsName,
       docsLocation: docsLocation,
-      seen: seen ?? "",
+      
     );
     //* my chat
     FirebaseFirestore.instance
@@ -160,19 +176,6 @@ class ChattingController extends ChangeNotifier {
   //*==============================================================
   List<MessageModel>? messages = [];
   bool messageLoaded = false;
-
-  // void resetMessages() {
-  //   messages = [];
-  //   notifyListeners();
-  // }
-  //*==============================================================
-  //*                        is seen message
-  //*==============================================================
-  bool isSeen = false;
-  void seeMessage() {
-    isSeen = true;
-    notifyListeners();
-  }
 
   Future<void> getMessage({
     String? receiverId,
@@ -280,7 +283,6 @@ class ChattingController extends ChangeNotifier {
   bool isRecorderReady = false;
   bool isChangeHintText = false;
   String? hintText = "Message";
-
   Future initRecorder() async {
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
@@ -326,6 +328,8 @@ class ChattingController extends ChangeNotifier {
     notifyListeners();
   }
 
+  RecorderController recordController = RecorderController();
+
   File? audioFile;
   Future stop({
     String? receiverId,
@@ -333,6 +337,8 @@ class ChattingController extends ChangeNotifier {
     //* Uri.file(selectImage!.path).pathSegments.last}
     if (!isRecorderReady) return;
     final path = await recorder.stopRecorder();
+
+    recordController.record(path: path);
     audioFile = File(path!);
     print("audioFile $audioFile");
     secondTime = 0;
@@ -353,7 +359,7 @@ class ChattingController extends ChangeNotifier {
       (Timer timer) {
         secondTime = secondTime! + 1;
         notifyListeners();
-        if (secondTime == 10) {
+        if (secondTime == 60) {
           minutesTime = minutesTime! + 1;
           secondTime = 0;
           print("60 seconds");
@@ -449,6 +455,14 @@ class ChattingController extends ChangeNotifier {
       print("SaveRecord Error");
     });
   }
+
+  //*=======================================================================
+  //*                        Play One Record
+  //*=======================================================================
+  void oneRecordPlayed(){
+    
+  }
+  
 
   //*=======================================================================
   //*                      send docs <pdf,word,files>
