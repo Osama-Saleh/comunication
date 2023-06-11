@@ -377,6 +377,7 @@ class ChattingController extends ChangeNotifier {
   //*===========================================================================
   bool showPlay = false;
 
+
   AssetsAudioPlayer player = AssetsAudioPlayer();
   Future initplayer({String? path}) async {
     player.open(Audio("$path"), autoStart: false, showNotification: true);
@@ -460,7 +461,7 @@ class ChattingController extends ChangeNotifier {
   //*                        Play One Record
   //*=======================================================================
   void oneRecordPlayed(){
-    
+
   }
   
 
